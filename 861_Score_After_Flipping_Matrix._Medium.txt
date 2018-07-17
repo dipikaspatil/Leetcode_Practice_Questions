@@ -1,0 +1,100 @@
+861. Score After Flipping Matrix
+
+We have a two dimensional matrix A where each value is 0 or 1.
+
+A move consists of choosing any row or column, and toggling each value in that row or column: changing all 0s to 1s, and all 1s to 0s.
+
+After making any number of moves, every row of this matrix is interpreted as a binary number, and the score of the matrix is the sum of these numbers.
+
+Return the highest possible score.
+
+ 
+
+Example 1:
+
+Input: [[0,0,1,1],[1,0,1,0],[1,1,0,0]]
+Output: 39
+Explanation:
+Toggled to [[1,1,1,1],[1,0,0,1],[1,1,1,1]].
+0b1111 + 0b1001 + 0b1111 = 15 + 9 + 15 = 39
+ 
+
+Note:
+
+1 <= A.length <= 20
+1 <= A[0].length <= 20
+A[i][j] is 0 or 1.
+
+----------------------------------------------------------------------------
+
+class Solution {
+public:
+    int matrixScore(vector<vector<int>>& A) {
+        int row_bit[A.size()] = {0};
+        int num1 = 0, num2 = 0;
+        int base = pow(10, (A[0].size()-1));
+        for (int i = 0; i < A.size(); ++i) {
+            for (int j = 0; j < A[0].size(); ++j) {
+                num1 += (A[i][j] * base);
+                num2 += ((!A[i][j]) * base);
+                base /= 10;
+            }
+            //cout << num1 << " " << num2 << endl;
+            if (num1 < num2) {
+                //cout << i << endl;
+                row_bit[i] = 1;
+            }
+            num1 = 0;
+            num2 = 0;
+            base = pow(10, (A[0].size()-1));
+        }
+        
+        for (int i = 0; i < A.size(); ++i) {
+            if (!row_bit[i]) {
+                continue;
+            }
+            for (int j = 0; j < A[0].size(); ++j) {
+                A[i][j] = !A[i][j];
+            }
+        }
+        int zero_count = 0, one_count = 0;
+        int column_bit[A[0].size()] = {0};
+        for (int j = 0; j < A[0].size(); ++j) {
+            for (int i = 0; i < A.size(); ++i) {
+                if (A[i][j] == 0) {
+                    ++zero_count;
+                } else {
+                    ++one_count;
+                }
+            }
+            
+            if (zero_count > one_count) {
+                column_bit[j] = 1;
+            }
+            zero_count = 0;
+            one_count = 0;
+        }
+        
+        for (int j = 0; j < A[0].size(); ++j) {
+            if (!column_bit[j]) {
+                continue;
+            }
+            for (int i = 0; i < A.size(); ++i) {
+                A[i][j] = !A[i][j];
+            }
+        }
+        
+        int ret_sum = 0 , indx = A[0].size()-1;
+        base = 2;
+        for (int i = 0; i < A.size(); ++i) {
+            for (int j = 0; j < A[0].size(); ++j) {
+                //cout << A[i][j] << endl;
+                ret_sum += (A[i][j] * pow(2,indx));
+                --indx;
+            }
+            indx = A[0].size()-1;
+        }
+        
+        return ret_sum;
+    }
+};

@@ -1,0 +1,85 @@
+338. Counting Bits
+
+Given a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1's in their binary representation and return them as an array.
+
+Example:
+For num = 5 you should return [0,1,1,2,1,2].
+
+Follow up:
+
+It is very easy to come up with a solution with run time O(n*sizeof(integer)). But can you do it in linear time O(n) /possibly in a single pass?
+Space complexity should be O(n).
+Can you do it like a boss? Do it without using any builtin function like __builtin_popcount in c++ or in any other language.
+Credits:
+Special thanks to @ syedee for adding this problem and creating all test cases.
+
+------------------------------------------------------------------------
+
+/*
+bits count pattern
+0 1
+1 2
+1 2 2 3
+1 2 2 3 2 3 3 4
+1 2 2 3 2 3 3 4 2 3 3 4 3 4 4 5
+1 2 2 3 2 3 3 4 2 3 3 4 3 4 4 5 2 3 3 4 3 4 4 5 3 4 4 5 4 5 5 6
+*/
+class Solution {
+public:
+    vector<int> countBits(int num) {
+        vector<int> ret_vect;
+        switch (num) {
+            case 0 : 
+                ret_vect.push_back(0);
+                break;
+            case 1 : 
+                ret_vect.push_back(0);
+                ret_vect.push_back(1);
+                break;
+            case 2:
+                ret_vect.push_back(0);
+                ret_vect.push_back(1);
+                ret_vect.push_back(1);
+                break;
+            default:
+                ret_vect.push_back(0);
+                ret_vect.push_back(1);
+                ret_vect.push_back(1);
+                ret_vect.push_back(2);
+                break;
+        }
+        
+        if (num < 4) {
+            return ret_vect;
+        }
+        int indx = 4;
+        int global_indx = ret_vect.size();
+        int current_indx = 2, current_indx_bkp = 2;
+        bool plus_one = false;
+        while(indx <= num) {
+            if (current_indx != global_indx) {
+                if (!plus_one) {
+                    ret_vect.push_back(ret_vect[current_indx]);
+                } else {
+                    ret_vect.push_back(ret_vect[current_indx] + 1);
+                }
+                
+                ++current_indx;
+            } else {
+                current_indx = current_indx_bkp;
+                current_indx_bkp = global_indx;
+                if (plus_one) {
+                    global_indx = ret_vect.size();
+                }
+                
+                plus_one = !(plus_one);
+                --indx;
+            }
+            
+            ++indx;
+        }
+        
+        return ret_vect;
+        
+    }
+};

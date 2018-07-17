@@ -1,0 +1,105 @@
+Given two integers L and R, find the count of numbers in the range [L, R] (inclusive) having a prime number of set bits in their binary representation.
+
+(Recall that the number of set bits an integer has is the number of 1s present when written in binary. For example, 21 written in binary is 10101 which has 3 set bits. Also, 1 is not a prime.)
+
+Example 1:
+
+Input: L = 6, R = 10
+Output: 4
+Explanation:
+6 -> 110 (2 set bits, 2 is prime)
+7 -> 111 (3 set bits, 3 is prime)
+9 -> 1001 (2 set bits , 2 is prime)
+10->1010 (2 set bits , 2 is prime)
+Example 2:
+
+Input: L = 10, R = 15
+Output: 5
+Explanation:
+10 -> 1010 (2 set bits, 2 is prime)
+11 -> 1011 (3 set bits, 3 is prime)
+12 -> 1100 (2 set bits, 2 is prime)
+13 -> 1101 (3 set bits, 3 is prime)
+14 -> 1110 (3 set bits, 3 is prime)
+15 -> 1111 (4 set bits, 4 is not prime)
+Note:
+
+L, R will be integers L <= R in the range [1, 10^6].
+R - L will be at most 10000.
+
+-----------------------------------------------------------------------------------------------------
+//brute force
+class Solution {
+public:
+    int countPrimeSetBits(int L, int R) {
+	int ret_num = 0;
+        int num = 0;
+        int num2;
+        bool is_num_prime = true;
+        for (int i = L; i <= R; ++i) {
+            //cout << i << endl;
+            num2 = i;
+            while(num2) {
+                //cout << num2 << endl;
+                if (num2 & 1 == 1){
+                    ++num;
+                }
+                num2 = num2 >> 1;
+            }
+            if (num2 == 2) {
+                ++ret_num;
+            } else {
+                //cout << i << " " << num << endl;
+                for (int i = 2; i < num; ++i) {
+                    if (num % i == 0) {
+                        is_num_prime = false;
+                    }
+                }
+
+                if (num >= 2 && is_num_prime) {
+                    ++ret_num;
+                } else {
+                    is_num_prime = true;
+                }
+            }
+            num = 0;
+        }
+        
+        return ret_num;
+	}
+};
+
+-------------------------------------------------------------------------------------------------------------		
+//better solution
+class Solution {
+public:
+    int countPrimeSetBits(int L, int R) {
+        int ret_num = 0;
+        int set_bits_cnt;
+        bool is_num_prime = true;
+        for (int i = L; i <= R; ++i) {
+            //set_bits_cnt = ip_bitset(i).count();
+            bitset<32> ip_bitset(i);
+            set_bits_cnt = ip_bitset.count();
+            if (set_bits_cnt == 2) {
+                ++ret_num;
+            } else if (set_bits_cnt >= 2) {
+                //cout << i << " " << set_bits_cnt << endl;
+                for (int i = 2; i <= sqrt(set_bits_cnt); ++i) {
+                    if (set_bits_cnt % i == 0) {
+                        is_num_prime = false;
+                    }
+                }
+
+                if (is_num_prime) {
+                    ++ret_num;
+                } else {
+                    is_num_prime = true;
+                }
+            }
+            
+        }
+        
+        return ret_num;
+    }
+};

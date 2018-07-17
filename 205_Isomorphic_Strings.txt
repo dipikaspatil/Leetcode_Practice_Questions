@@ -1,0 +1,67 @@
+Given two strings s and t, determine if they are isomorphic.
+
+Two strings are isomorphic if the characters in s can be replaced to get t.
+
+All occurrences of a character must be replaced with another character while preserving the order of characters. No two characters may map to the same character but a character may map to itself.
+
+Example 1:
+
+Input: s = "egg", t = "add"
+Output: true
+Example 2:
+
+Input: s = "foo", t = "bar"
+Output: false
+Example 3:
+
+Input: s = "paper", t = "title"
+Output: true
+Note:
+You may assume both s and t have the same length.
+
+----------------------------------------------------------------------
+//my solution
+class Solution {
+public:
+    bool isIsomorphic(string s, string t) {
+        map<char, char> ip_map_s_t;
+        map<char, char> ip_map_t_s;
+        
+        for (int i = 0; i < s.length(); ++i) {
+            if (ip_map_s_t.find(s[i]) != ip_map_s_t.end() && ip_map_s_t[s[i]] != t[i]) {
+                return false;
+            }
+            if (ip_map_t_s.find(t[i]) != ip_map_t_s.end() && ip_map_t_s[t[i]] != s[i]) {
+                return false;
+            }
+            
+            ip_map_s_t[s[i]] = t[i];
+            ip_map_t_s[t[i]] = s[i];
+        }
+        
+        return true;
+    }
+};
+
+---------------------------------------------------------------------
+//better solution
+class Solution {
+public:
+    bool isIsomorphic(string s, string t) {
+        //vector<char> ip_vect(128, '~');
+        //vector<char> ip_vect2(128, '~');
+        char ip_vect[128] = {0};
+        char ip_vect2[128] = {0};
+        for (int i = 0; i < s.length(); ++i) {
+            if (ip_vect[s[i]] != ip_vect2[t[i]]){
+                //cout << "ip_vect[s[i]] " << ip_vect[s[i]] << " ip_vect2[t[i]] " << ip_vect2[t[i]] << endl;
+                return false;
+            }
+            //cout << "ip_vect[s[i]] " << ip_vect[s[i]] << " ip_vect2[t[i]] " << ip_vect2[t[i]] << endl;
+            ip_vect[s[i]] = i+1; //used i+1 because i = 0 is null the value with which it is initialized
+            ip_vect2[t[i]] = i+1;
+        }
+        
+        return true;
+    }
+};

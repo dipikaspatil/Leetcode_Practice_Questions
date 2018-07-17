@@ -1,0 +1,33 @@
+//624. Maximum Distance in Array
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+
+class solution {
+public:
+int dist (vector<vector<int>> &nums) {
+        int dist;
+        vector<int> ip_vect;
+
+        for (int i =0; i < nums.size(); ++i) {
+                if (ip_vect.size() == 0) {
+                        ip_vect = nums[i];
+                }
+                else {
+                        ip_vect.insert(ip_vect.end(), nums[i].begin(), nums[i].end());
+                }
+        }
+
+        std::sort(ip_vect.begin(), ip_vect.end());
+        dist = ip_vect[ip_vect.size() -1] - ip_vect[0];
+        return dist;
+}
+
+};
+
+int main() {
+        solution s;
+        vector<vector<int>> ip = {{1,2,100},{4,5},{1,2,3}};
+        cout << "dist = " << s.dist(ip) << endl;
+}

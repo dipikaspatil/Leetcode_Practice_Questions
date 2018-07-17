@@ -1,0 +1,115 @@
+Given a binary tree, check whether it is a mirror of itself (ie, symmetric around its center).
+
+For example, this binary tree [1,2,2,3,4,4,3] is symmetric:
+
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+But the following [1,2,2,null,3,null,3] is not:
+    1
+   / \
+  2   2
+   \   \
+   3    3
+Note:
+Bonus points if you could solve it both recursively and iteratively.
+----------------------------------------------------------------------------------
+//my solution - without recursion
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {
+        queue<pair<TreeNode*, int>> ip_queue;
+        pair<TreeNode*, int> current_node;
+        vector<int> ip_vect, ip_vect2;
+        int level = 1;
+        ip_queue.push(make_pair(root,1));
+        
+        while(!ip_queue.empty()) {
+            current_node = ip_queue.front();
+            if (level != current_node.second) {
+                //cout << level << " " << current_node.second << endl;
+                level = current_node.second;
+                ip_vect2 = ip_vect;
+                reverse(ip_vect.begin(), ip_vect.end());
+                if (ip_vect != ip_vect2) {
+                    return false;
+                }
+                ip_vect.clear();
+                if (current_node.first == nullptr) {
+                    ip_vect.push_back(INT_MIN);
+                } else {
+                    ip_vect.push_back(current_node.first->val);
+                }
+            } else {
+                if (current_node.first == nullptr) {
+                    ip_vect.push_back(INT_MIN);
+                } else {
+                    ip_vect.push_back(current_node.first->val);
+                }
+            }
+            
+            if (current_node.first != nullptr) {
+                
+                if (current_node.first->left != nullptr) {
+                    ip_queue.push(make_pair(current_node.first->left, current_node.second+1));
+                } else {
+                    ip_queue.push(make_pair(nullptr, current_node.second+1));
+                }
+                
+                if (current_node.first->right != nullptr) {
+                    ip_queue.push(make_pair(current_node.first->right, current_node.second+1));
+                } else {
+                    ip_queue.push(make_pair(nullptr, current_node.second+1));
+                }
+            }
+            
+            
+            
+            
+            ip_queue.pop();
+        }
+        
+        return true;
+        
+        
+    }
+};
+----------------------------------------------------------------------------------
+//good solution - with recursion
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {
+        if (root==NULL) return true;
+        return helper(root->left, root->right);
+    }
+    
+    bool helper(TreeNode* left, TreeNode* right) {
+        if (left==NULL && right==NULL) return true;
+        if (left==NULL) return false;
+        if (right==NULL) return false;
+        
+        if (left->val!=right->val) return false;
+        return helper(left->left, right->right) && helper(left->right, right->left);
+    }
+};
